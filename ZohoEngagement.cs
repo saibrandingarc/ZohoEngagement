@@ -1,4 +1,5 @@
 ﻿using System;
+using Azure.Core;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -246,8 +247,8 @@ namespace ZohoEngagement
 
         public async Task<string> GetZohoCasesByDaysAsync()
         {
+            _logger.LogInformation($"Running Zoho Cases:");
             var accessToken = await GetValidTokenAsync();
-            Console.WriteLine(accessToken);
             _logger.LogInformation($"Access Token: {accessToken}");
             if (accessToken == "Invalid Token")
             {
@@ -275,7 +276,7 @@ namespace ZohoEngagement
                     request.Content = content;
                     var response = await _httpClient.SendAsync(request);
                     response.EnsureSuccessStatusCode();
-                    Console.WriteLine(await response.Content.ReadAsStringAsync());
+                    _logger.LogInformation(await response.Content.ReadAsStringAsync());
 
                     var cases = await response.Content.ReadAsStringAsync();
 
@@ -302,7 +303,7 @@ namespace ZohoEngagement
                                 From_Date = startOfPreviousMonth,
                                 To_Date = endOfPreviousMonth
                             };
-                            Console.WriteLine(caseData);
+                            _logger.LogWarning("casedata");
 
                             _context.ZohoCasesMonths.Add(caseData);
                         }
